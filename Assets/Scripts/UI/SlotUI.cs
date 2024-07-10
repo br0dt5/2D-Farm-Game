@@ -6,8 +6,13 @@ using TMPro;
 
 public class SlotUI : MonoBehaviour
 {
+    public int slotId;
+    public Inventory inventory;
+
     public Image itemIcon;
     public TextMeshProUGUI quantityText;
+
+    [SerializeField] private GameObject highlight;
 
     public void SetItem(Inventory.Slot slot)
     {
@@ -24,5 +29,10 @@ public class SlotUI : MonoBehaviour
         itemIcon.sprite = null;
         itemIcon.color = new Color(1, 1, 1, 0);
         quantityText.text = string.Empty;
+    }
+
+    public void SetHighlight(bool isOn)
+    {
+        highlight.SetActive(isOn);
     }
 }

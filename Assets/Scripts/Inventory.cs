@@ -14,6 +14,8 @@ public class Inventory
 
         public Sprite icon;
 
+        public bool IsEmpty => itemName == string.Empty && count == 0;
+
         public Slot()
         {
             itemName = string.Empty;
@@ -21,9 +23,9 @@ public class Inventory
             maxAllowed = 64;
         }
 
-        public bool CanAddItem()
+        public bool CanAddItem(string itemName)
         {
-            return count < maxAllowed;
+            return this.itemName == itemName && count < maxAllowed;
         }
 
         public void AddItem(Item item)
@@ -31,6 +33,14 @@ public class Inventory
             itemName = item.data.itemName;
             icon = item.data.icon;
             count++;
+        }
+
+        public void AddItem(string itemName, Sprite icon, int maxAllowed)
+        {
+            this.itemName = itemName;
+            this.icon = icon;
+            count++;
+            this.maxAllowed = maxAllowed;
         }
 
         public void RemoveItem()
@@ -49,6 +59,7 @@ public class Inventory
     }
 
     public List<Slot> slots = new List<Slot>();
+    public Slot selectedSlot = null;
 
     public Inventory(int numSlots)
     {
@@ -63,7 +74,7 @@ public class Inventory
     {
         foreach (var slot in slots)
         {
-            if (slot.itemName == item.data.itemName && slot.CanAddItem())
+            if (slot.itemName == item.data.itemName && slot.CanAddItem(item.data.itemName))
             {
                 slot.AddItem(item);
                 return;
@@ -83,5 +94,44 @@ public class Inventory
     public void Remove(int index)
     {
         slots[index].RemoveItem();
+    }
+
+    public void Remove(int index, int amount)
+    {
+        if (slots[index].count >= amount)
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                Remove(index);
+            }
+        }
+    }
+
+    public void MoveSlot(int fromIndex, int toIndex, Inventory toInventory, int amount = 1)
+    {
+        Slot fromSlot = slots[fromIndex];
+        Slot toSlot = toInventory.slots[toIndex];
+
+        if (fromSlot.itemName == string.Empty)
+        {
+            return;
+        }
+
+        if (toSlot.IsEmpty || toSlot.CanAddItem(fromSlot.itemName))
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                toSlot.AddItem(fromSlot.itemName, fromSlot.icon, fromSlot.maxAllowed);
+                fromSlot.RemoveItem();
+            }
+        }
+    }
+
+    public void SelectSlot(int index)
+    {
+        if (slots != null && slots.Count > 0)
+        {
+            selectedSlot = slots[index];
+        }
     }
 }

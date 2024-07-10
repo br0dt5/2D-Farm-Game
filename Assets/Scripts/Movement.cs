@@ -27,19 +27,21 @@ public class Movement : MonoBehaviour
 
     void AnimateMovement(Vector3 direction)
     {
-        if (animator != null)
+        if (animator == null)
         {
-            if (direction.magnitude > 0)
-            {
-                animator.SetBool("isMoving", true);
+            return;
+        }
 
-                animator.SetFloat("horizontal", direction.x);
-                animator.SetFloat("vertical", direction.y);
-            }
-            else
-            {
-                animator.SetBool("isMoving", false);
-            }
+        if (direction.magnitude > 0)
+        {
+            animator.SetBool("isMoving", true);
+
+            animator.SetFloat("horizontal", direction.x);
+            animator.SetFloat("vertical", direction.y);
+        }
+        else
+        {
+            animator.SetBool("isMoving", false);
         }
     }
 }
